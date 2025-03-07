@@ -32,7 +32,8 @@ class MailLogin extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(tr("#mail_login.text.title"))),
-      body: Center(
+      body: Align(
+        alignment: Alignment.topCenter,
         child: SizedBox(
           width: kIsWeb ? 1000 : null,
           child: Padding(

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data' show Uint8List;
 import 'package:customer_app/_SERVICE/product_model.dart' show Product, ProductResponse;
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -51,27 +52,7 @@ class ShoporamaService {
     try {
       final Uri url = Uri.parse("${baseUrl}product");
 
-      final bodyInJSON = utf8.encode(
-        jsonEncode({
-          'name': product.name, // , 'supplier_id': product.supplierId, 'price': product.price, 'is_online': product.isOnline, 'no_shopping': 0,
-        }),
-      );
-
-      dioPost(url: "${baseUrl}product", headers: _headers, bodyInJSON: {'name': product.name});
-
-      /*
-      final response = await http.post(
-        url,
-        headers: _headers,
-        body: bodyInJSON,
-        encodi/ng: Utf8Codec(), // Korrekt JSON encoding
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception("Failed to create product: ${response.statusCode} - ${response.reasonPhrase}\nResponse body: ${response.body}");
-      }*/
+      dio(postType: DIOPostType.post, url: "${baseUrl}product", headers: _headers, bodyInJSON: {'name': product.name});
     } catch (e) {
       throw Exception("Error creating product: $e");
     }
@@ -106,6 +87,21 @@ class ShoporamaService {
       }
     } catch (e) {
       throw Exception("Error fetching products: $e");
+    }
+  }
+
+  Future<void> postImage({required int productId, required Uint8List image}) async {
+    try {
+      final Uri url = Uri.parse("${baseUrl}product/$productId");
+
+      final bodyInJSON = {
+        'images': {'weight': 1, 'description': 'Dette er et billede', 'data': base64Encode(image), 'remove': 0},
+      };
+
+      log('fdhgf');
+      await dio(postType: DIOPostType.put, url: url.toString(), headers: _headers, bodyInJSON: bodyInJSON);
+    } catch (e) {
+      throw Exception("Error uploading product image: $e");
     }
   }
 
@@ -179,18 +175,19 @@ class ShoporamaService {
   }
 }
 
-Future<void> dioPost({required String url, required Map<String, String> headers, required Map<String, dynamic> bodyInJSON}) async {
+enum DIOPostType { post, put }
+
+Future<void> dio({required DIOPostType postType, required String url, required Map<String, String> headers, required Map<String, dynamic> bodyInJSON}) async {
   try {
     final dio = Dio();
 
     // Tilføj en interceptor for at logge anmodninger og svar
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
 
-    final response = await dio.post(
-      url,
-      options: Options(headers: headers),
-      data: bodyInJSON, // Dio håndterer automatisk JSON-konvertering
-    );
+    final response = await switch (postType) {
+      DIOPostType.put => dio.put(url, options: Options(headers: headers), data: bodyInJSON),
+      _ => dio.post(url, options: Options(headers: headers), data: bodyInJSON),
+    };
 
     log('Response Status Code: ${response.statusCode}');
     log('Response Data: ${jsonEncode(response.data)}'); // Udskriv responsdata

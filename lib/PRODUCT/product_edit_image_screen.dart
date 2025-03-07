@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../APP_IMAGE_COLLECTION/package.dart';
 import '../START/design.dart';
 import '../_SERVICE/product_model.dart' show Product;
 import '../_SERVICE/shoporama.dart';
+import 'image_picker_widget.dart';
 import 'menu_icon.dart';
 
 class ProductEditImageScreen extends StatelessWidget {
@@ -16,6 +20,15 @@ class ProductEditImageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future resizeAndUploadSingle(ImageLoadingStateInfo singleFile) async {
+      try {
+        await decodeImage(singleFile, UploadProcess(command: 'decodeImage'));
+        await usercropImage(singleFile, UploadProcess(command: 'usercropImage', data: {'size': const Size(500, 500), 'context': context}));
+      } catch (e) {
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
@@ -41,14 +54,22 @@ class ProductEditImageScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (product.images == null || product.images!.isEmpty)
-                      Container(
-                        width: double.infinity,
-                        height: 200,
-
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
-                        child: Center(child: Text('Vælg billede', style: h2Style.copyWith(color: Colors.black))),
+                      ImagePickerWidget(
+                        maxSizeOfImage: Size(400, 400),
+                        allowCustomCrop: true,
+                        child: Container(
+                          width: double.infinity,
+                          height: 200,
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
+                          child: Center(child: Text('Vælg billede', style: h2Style.copyWith(color: Colors.black))),
+                        ),
+                        onImage: (imageBytes) {
+                          ShoporamaService().postImage(productId: product.productId!, image: imageBytes);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Action completed!")));
+                        },
                       ),
+
                     if (product.images != null && product.images!.isNotEmpty)
                       Container(
                         width: double.infinity,

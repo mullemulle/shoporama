@@ -190,5 +190,127 @@ class _FetchSetupByIdProviderElement extends FutureProviderElement<Setup?>
   String? get uid => (origin as FetchSetupByIdProvider).uid;
 }
 
+String _$getDeviceIdsHash() => r'5855bf536c67c5616d81cb84a98bc35cf838a2c7';
+
+/// See also [getDeviceIds].
+@ProviderFor(getDeviceIds)
+const getDeviceIdsProvider = GetDeviceIdsFamily();
+
+/// See also [getDeviceIds].
+class GetDeviceIdsFamily extends Family<AsyncValue<Map<String, dynamic>>> {
+  /// See also [getDeviceIds].
+  const GetDeviceIdsFamily();
+
+  /// See also [getDeviceIds].
+  GetDeviceIdsProvider call({required String appKey}) {
+    return GetDeviceIdsProvider(appKey: appKey);
+  }
+
+  @override
+  GetDeviceIdsProvider getProviderOverride(
+    covariant GetDeviceIdsProvider provider,
+  ) {
+    return call(appKey: provider.appKey);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getDeviceIdsProvider';
+}
+
+/// See also [getDeviceIds].
+class GetDeviceIdsProvider
+    extends AutoDisposeFutureProvider<Map<String, dynamic>> {
+  /// See also [getDeviceIds].
+  GetDeviceIdsProvider({required String appKey})
+    : this._internal(
+        (ref) => getDeviceIds(ref as GetDeviceIdsRef, appKey: appKey),
+        from: getDeviceIdsProvider,
+        name: r'getDeviceIdsProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$getDeviceIdsHash,
+        dependencies: GetDeviceIdsFamily._dependencies,
+        allTransitiveDependencies:
+            GetDeviceIdsFamily._allTransitiveDependencies,
+        appKey: appKey,
+      );
+
+  GetDeviceIdsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.appKey,
+  }) : super.internal();
+
+  final String appKey;
+
+  @override
+  Override overrideWith(
+    FutureOr<Map<String, dynamic>> Function(GetDeviceIdsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetDeviceIdsProvider._internal(
+        (ref) => create(ref as GetDeviceIdsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        appKey: appKey,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Map<String, dynamic>> createElement() {
+    return _GetDeviceIdsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetDeviceIdsProvider && other.appKey == appKey;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, appKey.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin GetDeviceIdsRef on AutoDisposeFutureProviderRef<Map<String, dynamic>> {
+  /// The parameter `appKey` of this provider.
+  String get appKey;
+}
+
+class _GetDeviceIdsProviderElement
+    extends AutoDisposeFutureProviderElement<Map<String, dynamic>>
+    with GetDeviceIdsRef {
+  _GetDeviceIdsProviderElement(super.provider);
+
+  @override
+  String get appKey => (origin as GetDeviceIdsProvider).appKey;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -13,6 +13,7 @@ import 'package:getwidget/getwidget.dart';
 import '../APP_LOGIN/mail_login.dart';
 import '../ORDER/order_page.dart';
 import '../STD_WIDGET/package.dart';
+import '../WARNING/warning_users.dart' show WarningUsers;
 import 'design.dart';
 
 final Map<String, Widget> appMap = {};
@@ -31,6 +32,10 @@ class StartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(userProvider);
+
+    if (userState == null) return MailLogin(onLeaving: (action, message) => ref.invalidate(userProvider));
+
     final setup = ref.watch(fetchSetupByIdProvider(uid: FirebaseAuth.instance.currentUser?.uid));
 
     return setup.when(
@@ -38,7 +43,6 @@ class StartScreen extends ConsumerWidget {
         if (setup == null || setup.appKey == null) return SetupCheckScreen(setup: setup);
 
         final navState = ref.watch(startPageProvider);
-        final userState = ref.watch(userProvider);
 
         return Scaffold(
           appBar: AppBar(title: Image.asset('assets/shoporama.png'), centerTitle: true, actions: action(context: context, value: navState)),
@@ -133,7 +137,7 @@ class Navigation extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 3),
                 type: GFButtonType.transparent,
                 color: Colors.transparent,
-                onPressed: () => onTap(0),
+                onPressed: () => onTap(3),
                 icon: Icon(Icons.warning, color: Colors.yellowAccent, size: 33), //Icon(Icons.home, color: style.color, size: 33),
               ),
             ),
@@ -159,7 +163,8 @@ class App extends ConsumerWidget {
         0 => appCache('start_page', onInit: () => ProductPage(supplierId: setup.supplierId)),
         1 => appCache('order_page', onInit: () => OrderPage(supplierId: setup.supplierId)),
         2 => ProductPage(supplierId: setup.supplierId),
-        3 => ProductPage(supplierId: setup.supplierId),
+        3 => WarningUsers(setup: setup),
+
         _ => Text('NOT FOUND'),
       },
     );
