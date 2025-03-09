@@ -104,10 +104,26 @@ class ProductPage extends ConsumerWidget {
 
                   return GestureDetector(
                     onTap: () async => await Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductItemScreen(product: product))),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
-                      child: ListTile(leading: image == null ? null : Image.network(image), title: Text(product.name), subtitle: Text("ID: ${product.productId}"), shape: const Border(bottom: BorderSide(color: Colors.white, width: 1))),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: ListTile(
+                        tileColor: Colors.white,
+                        leading:
+                            image == null
+                                ? null
+                                : Stack(
+                                  children: [
+                                    Padding(padding: EdgeInsets.only(right: 13), child: SizedBox(width: 60, height: 60, child: Image.network(image))),
+                                    if (product.images != null && product.images!.length > 1) Positioned(bottom: 2, right: 0, child: Column(children: [Icon(Icons.image_outlined, size: 15, color: Colors.black)])),
+                                  ],
+                                ),
+                        trailing: product.isOnline == 1 ? null : Icon(Icons.power_off_outlined),
+                        title: Text(product.name),
+                        subtitle: Text("ID: ${product.productId}"),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // Runde hjørner
+                        ),
+                      ),
                     ),
                   );
                 }),

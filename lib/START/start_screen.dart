@@ -93,10 +93,9 @@ class StartScreen extends ConsumerWidget {
         elevation: 6,
         itemBuilder:
             (BuildContext context) => [
-              PopupMenuItem(value: "setup", child: Row(children: [Icon(Icons.settings, color: Colors.blue), SizedBox(width: 10), Text("Indstillinger")])),
-              PopupMenuItem(value: "user", child: Row(children: [Icon(Icons.person_2_rounded, color: Colors.green), SizedBox(width: 10), Text("Bruger")])),
+              PopupMenuItem(value: "user", child: Row(children: [Icon(Icons.person_2_rounded, color: Colors.green), SizedBox(width: 10), Text(tr("#navigation.popup.user"))])),
               const PopupMenuDivider(),
-              PopupMenuItem(value: "restparti", child: Row(children: [Icon(Icons.store, color: Colors.black), SizedBox(width: 10), Text("Restparti leverandør")])),
+              PopupMenuItem(value: "restparti", child: Row(children: [Icon(Icons.store, color: Colors.black), SizedBox(width: 10), Text(tr("#navigation.popup.user"))])),
             ],
       ),
     ];

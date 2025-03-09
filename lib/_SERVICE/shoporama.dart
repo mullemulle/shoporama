@@ -90,12 +90,17 @@ class ShoporamaService {
     }
   }
 
-  Future<void> postImage({required int productId, required Uint8List image}) async {
+  /* **************************************************** */
+  // PRODUCT - IMAGE
+  /* **************************************************** */
+  Future<void> putImage({required int productId, required Uint8List image}) async {
     try {
       final Uri url = Uri.parse("${baseUrl}product/$productId");
 
       final bodyInJSON = {
-        'images': {'weight': 1, 'description': 'Dette er et billede', 'data': base64Encode(image), 'remove': 0},
+        'images': [
+          {'weight': 1, 'description': 'Dette er et billede', 'data': '${base64Encode(image)}', 'remove': 0},
+        ],
       };
 
       log('fdhgf');
@@ -105,16 +110,15 @@ class ShoporamaService {
     }
   }
 
-  /* **************************************************** */
-  // PRODUCT - IMAGE
-  /* **************************************************** */
   Future<void> deleteImage({required int productId, required String imageId}) async {
     try {
       final Uri url = Uri.parse("${baseUrl}product/$productId");
 
-      final List<Map<String, dynamic>> bodyInJSON = [
-        {'image_id': imageId, 'remove': 1},
-      ];
+      final bodyInJSON = {
+        'images': [
+          {'image_id': imageId, 'remove': 1},
+        ],
+      };
 
       final response = await http.put(url, headers: _headers, body: jsonEncode(bodyInJSON));
 

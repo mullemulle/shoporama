@@ -4,12 +4,14 @@ import 'package:easy_localization/easy_localization.dart' show BuildContextEasyL
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 
 import 'START/design.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -21,6 +23,8 @@ void main() async {
     await EasyLocalization.ensureInitialized();
     EasyLocalization.logger.enableBuildModes = [];
   } catch (_) {}
+
+  FlutterNativeSplash.remove();
 
   runApp(
     ProviderScope(

@@ -43,19 +43,35 @@ class _ImagePickerWidgetState extends ConsumerState<ImagePickerWidget> {
       img.Image? image = img.decodeImage(imageBytes);
       if (image == null) throw Exception('error_decode_failed');
 
-      if (widget.allowCustomCrop) {
+      /*if (widget.allowCustomCrop) {
         final width = math.min(widget.maxSizeOfImage.width.toInt(), image.width);
         final height = math.min(widget.maxSizeOfImage.height.toInt(), image.height);
         imageBytes = await NativeImageCropper.cropRect(bytes: imageBytes, x: 0, y: 0, width: width, height: height, format: ImageFormat.png);
-      }
+        image = img.decodeImage(imageBytes);
+        if (image == null) throw Exception('error_decode_failed_after_crop');
+      }*/
 
-      Uint8List finalImage = _convertImage(img.decodeImage(imageBytes)!);
+      image = _resizeImageIfNeeded(image);
+      Uint8List finalImage = _convertImage(image);
       widget.onImage(finalImage);
     } catch (e) {
       _showErrorSnackbar(e.toString());
     } finally {
       setState(() => _isProcessing = false);
     }
+  }
+
+  img.Image _resizeImageIfNeeded(img.Image image) {
+    final maxWidth = widget.maxSizeOfImage.width.toInt();
+    final maxHeight = widget.maxSizeOfImage.height.toInt();
+
+    if (image.width > maxWidth || image.height > maxHeight) {
+      final scale = math.min(maxWidth / image.width, maxHeight / image.height);
+      final newWidth = (image.width * scale).toInt();
+      final newHeight = (image.height * scale).toInt();
+      return img.copyResize(image, width: newWidth, height: newHeight);
+    }
+    return image;
   }
 
   Uint8List _convertImage(img.Image image) {

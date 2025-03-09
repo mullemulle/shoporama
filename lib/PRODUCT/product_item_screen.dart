@@ -1,4 +1,5 @@
-import 'package:customer_app/PRODUCT/product_edit_image_screen.dart';
+import 'package:customer_app/PRODUCT/image_picker_widget.dart' show ImagePickerWidget;
+import 'package:easy_localization/easy_localization.dart' show tr;
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,7 +29,7 @@ class ProductItemScreen extends StatelessWidget {
                 context,
                 'Delete Product',
                 'Are you sure you want to delete this product?',
-                () => delete(productId: product.productId), // Din asynkrone handling
+                () => delete(context, productId: product.productId!.toInt()), // Din asynkrone handling
               );
             },
           ),
@@ -38,7 +39,15 @@ class ProductItemScreen extends StatelessWidget {
               // Implement online/pause functionality
             },
           ),
-          MenuIcon(icon: Icons.image, onTap: () async => await Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductEditImageScreen(product: product)))),
+          ImagePickerWidget(
+            maxSizeOfImage: Size(1000, 1000),
+            allowCustomCrop: false,
+            child: Container(decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2.0)), padding: EdgeInsets.all(5), margin: EdgeInsets.all(5), child: Icon(Icons.upload_file, color: Colors.white)),
+            onImage: (imageBytes) {
+              ShoporamaService().putImage(productId: product.productId!, image: imageBytes);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("#image.snackbar.image_uploaded"))));
+            },
+          ),
         ],
       ),
       body: SafeArea(
@@ -48,84 +57,93 @@ class ProductItemScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (product.images == null || product.images!.isEmpty)
-                  GestureDetector(
-                    onTap: () async => await Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductEditImageScreen(product: product))),
-                    child: Container(
-                      width: double.infinity,
-                      height: 200,
-
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
-                      child: Center(child: Text('Vælg billeder', style: h2Style.copyWith(color: Colors.black))),
-                    ),
-                  ),
                 if (product.images != null && product.images!.isNotEmpty)
-                  Container(
-                    width: double.infinity,
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final imageSelectState = ref.watch(imageSelectProvider);
 
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        final imageSelectState = ref.watch(imageSelectProvider);
-
-                        final primaryImage = product.images![imageSelectState];
-                        return Column(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: primaryImage.url,
-                              height: 200,
-                              fit: BoxFit.contain,
-                              placeholder: (context, url) => const Padding(padding: EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10), child: Center(child: SpinKitCircle(color: Colors.amber, size: 50.0))),
-                              errorWidget: (context, url, error) => Icon(Icons.broken_image, size: 100),
-                            ),
-                            if (product.images!.length > 1)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SingleChildScrollView(
-                                  // Tilføjet SingleChildScrollView
-                                  scrollDirection: Axis.horizontal, // Aktiverer vandret scroll
-                                  child: Row(
-                                    children:
-                                        product.images!.asMap().entries.map((entry) {
-                                          final index = entry.key;
-                                          final image = entry.value;
-
-                                          return GestureDetector(
-                                            onTap: () => ref.read(imageSelectProvider.notifier).state = index,
-                                            child: Padding(
-                                              // Tilføjet Padding for at give mellemrum mellem billederne
-                                              padding: const EdgeInsets.symmetric(horizontal: 4.0), // Juster padding efter behov
-                                              child: CachedNetworkImage(
-                                                imageUrl: image.url,
-                                                height: 50,
-                                                fit: BoxFit.contain,
-                                                placeholder: (context, url) => const Padding(padding: EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10), child: Center(child: SpinKitCircle(color: Colors.amber, size: 50.0))),
-                                                errorWidget: (context, url, error) => const Icon(Icons.broken_image, size: 100),
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  ),
+                      final primaryImage = product.images![imageSelectState];
+                      return Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: primaryImage.url,
+                                  height: 200,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) => const Padding(padding: EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10), child: Center(child: SpinKitCircle(color: Colors.amber, size: 50.0))),
+                                  errorWidget: (context, url, error) => Icon(Icons.broken_image, size: 100),
                                 ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
+                                if (product.images!.length > 1) ...[
+                                  Divider(color: Colors.black),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SingleChildScrollView(
+                                      // Tilføjet SingleChildScrollView
+                                      scrollDirection: Axis.horizontal, // Aktiverer vandret scroll
+                                      child: Row(
+                                        children:
+                                            product.images!.asMap().entries.map((entry) {
+                                              final index = entry.key;
+                                              final image = entry.value;
+
+                                              return GestureDetector(
+                                                onTap: () => ref.read(imageSelectProvider.notifier).state = index,
+                                                child: Padding(
+                                                  // Tilføjet Padding for at give mellemrum mellem billederne
+                                                  padding: const EdgeInsets.symmetric(horizontal: 4.0), // Juster padding efter behov
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: image.url,
+                                                    height: 50,
+                                                    fit: BoxFit.contain,
+                                                    placeholder: (context, url) => const Padding(padding: EdgeInsets.only(top: 20, bottom: 20, left: 10, right: 10), child: Center(child: SpinKitCircle(color: Colors.amber, size: 50.0))),
+                                                    errorWidget: (context, url, error) => const Icon(Icons.broken_image, size: 100),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            right: 10,
+                            top: 10,
+                            child: MenuIcon(
+                              color: Colors.black,
+                              icon: Icons.delete,
+                              onTap: () async {
+                                try {
+                                  await deleteImage(context, productId: product.productId!, imageId: primaryImage.imageId!);
+                                } catch (e) {
+                                  if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr('#error.try_agian'))));
+                                }
+                                if (context.mounted) Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 SizedBox(height: 26),
                 Text(product.name, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
 
-                Text("Pris: ${product.price != null ? "${product.price} kr" : "Ikke oplyst"}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+                Text("${tr("#product.price")} ${product.price != null ? "${product.price} ${tr("#product.money_type")}" : tr("#product.no_price")}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
                 SizedBox(height: 26),
                 Container(
                   width: double.infinity,
                   constraints: BoxConstraints(minHeight: 100),
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(10)),
-                  child: Text(product.description ?? "Ingen beskrivelse tilgængelig", style: productText),
+                  child: Text(product.description ?? tr("#product.no_description"), style: productText),
                 ),
               ],
             ),
@@ -135,8 +153,22 @@ class ProductItemScreen extends StatelessWidget {
     );
   }
 
-  Future<void> delete({required productId}) async {
-    await ShoporamaService().deleteProduct(productId: productId);
+  Future<void> delete(BuildContext context, {required int productId}) async {
+    try {
+      await ShoporamaService().deleteProduct(productId: productId);
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr('#error.try_agian'))));
+    }
+    if (context.mounted) Navigator.of(context).pop();
+  }
+
+  Future<void> deleteImage(BuildContext context, {required int productId, required String imageId}) async {
+    try {
+      await ShoporamaService().deleteImage(productId: productId, imageId: imageId);
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr('#error.try_agian'))));
+    }
+    if (context.mounted) Navigator.of(context).pop();
   }
 }
 
