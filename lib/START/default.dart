@@ -1,3 +1,5 @@
+import '../COMMON/globals.dart' show GlobalValues;
+
 const allGoogleFonts =
     "Roboto,Lato,Open Sans,Montserrat,Oswald,Raleway,Quicksand,Poppins,Nunito,Ubuntu,ABORETO,Geostar,Crimson Text,Playfair Display,Arvo,Alegreya,Merriweather,Lora,Libre Baskerville,Vollkorn,Cinzel,Kranky,Sunshiney,Princess Sofia,Bungee Outline,Ruslan Display,Rubik Maze,Fascinate,Sixtyfour";
 const allPaddings = "0,2,5,10,20,30,40,50,70,100,150,200";
@@ -23,6 +25,8 @@ const primaryBackground = "#FF4f6367";
 const primaryBackgroundDark = "#FF434f52";
 const secondaryBackground = "#FFf0efe4";
 
+final defaults = GlobalValues(map: defaultDefinition);
+
 final defaultDefinition = {
   "color": {
     "white": white,
@@ -46,6 +50,12 @@ final defaultDefinition = {
     "splash_background": white, //"#ff57a340", //primaryBackground, //window10, //"#FF3AA6B9",
   },
   "font": {
+    "productTileTitle": {"color": windows10dark, "backgroundcolor": white, "size": 15.0, "fontname": "Montserrat"},
+    "productTileText": {"color": window10, "backgroundcolor": white, "size": 12.0, "fontname": "Open Sans"},
+    "productTilePrice": {"color": windows10dark, "backgroundcolor": white, "size": 12.0, "fontname": "Open Sans"},
+
+    "snackBarStyle": {"color": orange, "backgroundcolor": black, "size": 12.0, "fontname": "Open Sans"},
+
     "chat_user_name": {"color": windows10dark, "backgroundcolor": transparent, "size": 9.0, "fontname": "Open Sans"},
     "chat_me": {"color": windows10dark, "backgroundcolor": darkgreen, "size": 13.0, "fontname": "Open Sans"},
     "chat_other": {"color": white, "backgroundcolor": window10, "size": 13.0, "fontname": "Open Sans"},
@@ -77,7 +87,6 @@ final defaultDefinition = {
     "feed_markdowntitlefont": {"color": windows10dark, "backgroundcolor": "00000000", "size": 20.0, "fontname": "Montserrat"}, // DONE - Collection hjælp
     "feed_markdownsubtitlefont": {"color": windows10dark, "backgroundcolor": "00000000", "size": 18.0, "fontname": "Montserrat"}, // DONE - Collection hjælp
     "feed_markdowntextfont": {"color": windows10dark, "backgroundcolor": "00000000", "size": 15, "fontname": "Lato", "height": 1.2}, // DONE - Collection hjælp
-
     // PROPERTIES
     "property_headerfont": {"color": windows10dark, "backgroundcolor": outColor, "size": 18.0, "fontname": "Montserrat"},
     "property_titlefont": {"color": windows10dark, "backgroundcolor": transparent, "size": 15.0, "fontname": "Montserrat"},
@@ -113,14 +122,7 @@ final defaultDefinition = {
     "popuptitlefont": {"color": black, "backgroundcolor": white, "size": 15.0, "fontname": "Montserrat"},
     "singleActionStyle": {"color": windows10dark, "backgroundcolor": windows10dark, "size": 15.0, "fontname": "Montserrat"},
   },
-  "value": {
-    "internal_padding_top": "0.0",
-    "padding_left": "20.0",
-    "padding_right": "20.0",
-    "padding_top": "20.0",
-    "padding_bottom ": "20.0",
-    "margin_bottom": "0.0",
-  },
+  "value": {"internal_padding_top": "0.0", "padding_left": "20.0", "padding_right": "20.0", "padding_top": "20.0", "padding_bottom ": "20.0", "margin_bottom": "0.0"},
   "decoration": {
     "help": {"border": true, "radius": 10, "color": white, "backgroundcolor": outColor},
     "button": {"border": true, "radius": 20, "color": window10, "backgroundcolor": transparent},
@@ -128,7 +130,7 @@ final defaultDefinition = {
   },
   "padding": {
     "button": {"left": 20, "right": 20, "top": 3, "bottom": 3},
-    "buttonMargin": {"left": 0, "right": 0, "top": 10, "bottom": 10}
+    "buttonMargin": {"left": 0, "right": 0, "top": 10, "bottom": 10},
   },
-  "property": {'value': {}, "standard": {}}
+  "property": {'value': {}, "standard": {}},
 };

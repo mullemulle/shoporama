@@ -18,6 +18,25 @@ extension StringExtension on String {
   String splitTranslate(String prefix) {
     return split(',').map((e) => tr('$prefix.$e')).join(' ');
   }
+
+  // MARKDOWN
+  String toMarkdown() {
+    String text = this;
+
+    // Erstat HTML-entiteter
+    text = text.replaceAll('&aring;', 'å').replaceAll('&oslash;', 'ø').replaceAll('&aelig;', 'æ').replaceAll('&AElig;', 'Æ').replaceAll('&Oslash;', 'Ø').replaceAll('&Aring;', 'Å').replaceAll('&amp;', '&');
+
+    // Erstat HTML-tags med Markdown
+    text = text.replaceAllMapped(RegExp(r'<strong>(.*?)<\/strong>', dotAll: true), (match) => '**${match[1]}**');
+    text = text.replaceAllMapped(RegExp(r'<em>(.*?)<\/em>', dotAll: true), (match) => '*${match[1]}*');
+    text = text.replaceAll(RegExp(r'<br\s*\/?>'), '\n');
+    text = text.replaceAllMapped(RegExp(r'<p>(.*?)<\/p>', dotAll: true), (match) => '\n\n${match[1]}');
+
+    // Fjern eventuelle resterende HTML-tags
+    text = text.replaceAll(RegExp(r'<[^>]+>'), '');
+
+    return text.trim();
+  }
 }
 
 extension StringNullExtension on String? {

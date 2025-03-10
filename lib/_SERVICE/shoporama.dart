@@ -50,8 +50,6 @@ class ShoporamaService {
   /* **************************************************** */
   Future<void> postProductSimple({required Product product}) async {
     try {
-      final Uri url = Uri.parse("${baseUrl}product");
-
       dio(postType: DIOPostType.post, url: "${baseUrl}product", headers: _headers, bodyInJSON: {'name': product.name});
     } catch (e) {
       throw Exception("Error creating product: $e");
@@ -74,8 +72,17 @@ class ShoporamaService {
     }
   }
 
+  Future<void> postOnlineStatus({required int productId, required bool isOnline}) async {
+    try {
+      dio(postType: DIOPostType.post, url: "${baseUrl}product", headers: _headers, bodyInJSON: {'profile_id': productId, 'is_online': isOnline ? 1 : 0});
+    } catch (e) {
+      throw Exception("Error creating product: $e");
+    }
+  }
+
   Future<ProductResponse> fetchProducts({required int? supplierId, DateTime? lastModified, int limit = 100, int offset = 0}) async {
     try {
+      final fields = 'name,is_online';
       final Uri url = Uri.parse("${baseUrl}product?${supplierId != null ? 'supplier_id=$supplierId&' : ''}${lastModified != null ? "last_modified=${lastModified.toIso8601String()}&" : ""}limit=$limit&offset=$offset");
 
       final response = await http.get(url, headers: _headers);

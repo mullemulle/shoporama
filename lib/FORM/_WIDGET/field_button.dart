@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../../COMMON/package.dart';
+import '../../START/default.dart';
 import '../../STD_WIDGET/package.dart';
 
 class FieldButton extends ConsumerWidget {

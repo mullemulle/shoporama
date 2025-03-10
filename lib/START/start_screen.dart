@@ -57,6 +57,12 @@ class StartScreen extends ConsumerWidget {
 
   action({required BuildContext context, required int value}) {
     return [
+      IconButton(
+        icon: Icon(Icons.notification_important_outlined, color: Colors.grey),
+        onPressed: () {
+          // do something
+        },
+      ),
       PopupMenuButton<String>(
         onSelected: (value) async {
           switch (value) {
@@ -122,9 +128,9 @@ class Navigation extends StatelessWidget {
       showUnselectedLabels: false,
       type: BottomNavigationBarType.fixed,
       items: [
-        BottomNavigationBarItem(label: tr('#start.navigation.home'), icon: Icon(Icons.home, size: 33)),
-        BottomNavigationBarItem(label: tr('#start.navigation.statistic'), icon: Icon(Icons.shopping_basket, size: 33)),
-        BottomNavigationBarItem(label: tr('#start.navigation.add'), icon: Icon(Icons.add_circle, size: 33)),
+        BottomNavigationBarItem(label: tr('#start.navigation.home'), icon: Icon(value == 0 ? Icons.home : Icons.home_outlined, size: 33)),
+        BottomNavigationBarItem(label: tr('#start.navigation.add'), icon: Icon(value == 1 ? Icons.warehouse : Icons.warehouse_outlined, size: 33)),
+        BottomNavigationBarItem(label: tr('#start.navigation.shopping_basket'), icon: Icon(value == 2 ? Icons.shopping_bag : Icons.shopping_bag_outlined, size: 33)),
         if (warning > 1)
           BottomNavigationBarItem(
             label: 'warning',

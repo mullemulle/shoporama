@@ -74,6 +74,8 @@ class Product {
   final String? created;
   @JsonKey(name: 'is_online')
   final int isOnline;
+  @JsonKey(name: 'in_stock')
+  final int? inStock;
   @JsonKey(name: 'online_since')
   final String? onlineSince;
   @JsonKey(name: 'no_index')
@@ -156,6 +158,7 @@ class Product {
     this.mainCategoryId,
     this.created,
     required this.isOnline,
+    this.inStock,
     this.onlineSince,
     this.noIndex,
     this.removedOn,

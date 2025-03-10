@@ -5,10 +5,11 @@ import 'default.dart';
 import 'package.dart';
 
 class GlobalValues {
-  final Map<String, dynamic> map = defaultDefinition;
+  final Map<String, dynamic> map;
   final Map<String, dynamic> accountMap = {};
   int lastAccountMapHash = 0;
   final Map<String, dynamic> openMap = {};
+  GlobalValues({required this.map});
 
   EdgeInsets screenPadding = const EdgeInsets.only(left: 20, right: 20);
 
@@ -58,7 +59,7 @@ class GlobalValues {
     return map;
   }
 
-  MarkdownStyleSheet defaultMarkdownStyle({Color? fixedColor}) {
+  MarkdownStyleSheet defaultMarkdownStyle({required GlobalValues defaults, Color? fixedColor}) {
     TextStyle markdowntitlefont = defaults.textStyle(null).get('markdowntitlefont');
     TextStyle markdownsubtitlefont = defaults.textStyle(null).get('markdownsubtitlefont');
     TextStyle markdowntextfont = defaults.textStyle(null).get('markdowntextfont');
@@ -125,18 +126,12 @@ class DecorationConverter {
     if (thisMap is BoxDecoration) return thisMap;
 
     final color = HexColorHandler(thisMap['color']);
-    final border = Border.all(
-      color: color,
-    );
+    final border = Border.all(color: color);
     final double borderRadius = double.parse('${thisMap['radius'] ?? 5}');
 
     final backgroundcolor = HexColorHandler(thisMap['backgroundcolor'] ?? "#00000000");
 
-    map['decoration'][key] = BoxDecoration(
-      border: border,
-      borderRadius: BorderRadius.circular(borderRadius),
-      color: backgroundcolor,
-    );
+    map['decoration'][key] = BoxDecoration(border: border, borderRadius: BorderRadius.circular(borderRadius), color: backgroundcolor);
 
     return map['decoration'][key];
   }
@@ -166,61 +161,19 @@ class DynamicConverter {
   }
 }
 
-final defaults = GlobalValues();
-
 final shadow = [
-  const Shadow(
-    blurRadius: 10.0,
-    color: Colors.white,
-    offset: Offset(0, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: Colors.white,
-    offset: Offset(-1, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: Colors.white,
-    offset: Offset(1, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: Colors.white,
-    offset: Offset(0, -1),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: Colors.white,
-    offset: Offset(0, 1),
-  ),
+  const Shadow(blurRadius: 10.0, color: Colors.white, offset: Offset(0, 0)),
+  const Shadow(blurRadius: 10.0, color: Colors.white, offset: Offset(-1, 0)),
+  const Shadow(blurRadius: 10.0, color: Colors.white, offset: Offset(1, 0)),
+  const Shadow(blurRadius: 10.0, color: Colors.white, offset: Offset(0, -1)),
+  const Shadow(blurRadius: 10.0, color: Colors.white, offset: Offset(0, 1)),
 ];
 
 const shadowTransparentColor = Color.fromARGB(150, 255, 255, 255);
 final shadowTransparent = [
-  const Shadow(
-    blurRadius: 10.0,
-    color: shadowTransparentColor,
-    offset: Offset(0, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: shadowTransparentColor,
-    offset: Offset(-1, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: shadowTransparentColor,
-    offset: Offset(1, 0),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: shadowTransparentColor,
-    offset: Offset(0, -1),
-  ),
-  const Shadow(
-    blurRadius: 10.0,
-    color: shadowTransparentColor,
-    offset: Offset(0, 1),
-  ),
+  const Shadow(blurRadius: 10.0, color: shadowTransparentColor, offset: Offset(0, 0)),
+  const Shadow(blurRadius: 10.0, color: shadowTransparentColor, offset: Offset(-1, 0)),
+  const Shadow(blurRadius: 10.0, color: shadowTransparentColor, offset: Offset(1, 0)),
+  const Shadow(blurRadius: 10.0, color: shadowTransparentColor, offset: Offset(0, -1)),
+  const Shadow(blurRadius: 10.0, color: shadowTransparentColor, offset: Offset(0, 1)),
 ];

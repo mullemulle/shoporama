@@ -1,8 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../COMMON/globals.dart' show defaults;
+import '../START/default.dart' show defaults;
 import 'image_collection.dart';
 
 class ImageCollectionScreen extends ConsumerWidget {

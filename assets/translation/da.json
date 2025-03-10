@@ -1,1 +1,40 @@
-{}
+{
+  "#product": {
+    "id": "SKU:",
+    "price": "Pris",
+    "money_type": "kr.",
+    "no_description": "Ingen beskrivelse",
+    "action_completed": "Udført",
+    "delete": "Slet produkt",
+    "delete_are_you_sure": "Er du sikker på du vil slette?",
+    "set_offline": "Skjul",
+    "set_offline_text": "Vil du skjule produkt i shop.",
+    "set_online": "Synlig",
+    "set_online_text": "Vil du offentligøre produkt i shop.",
+    "sheet": {
+      "list": {
+        "title": "Filter Products",
+        "is_online": "Available Online",
+        "is_online_text": "Show only products that can be purchased online.",
+        "is_not_online": "Not Available Online",
+        "is_not_online_text": "Show products that are only available in physical stores.",
+        "in_stock": "In Stock",
+        "in_stock_text": "Show products currently available in stock.",
+        "not_in_stock": "Out of Stock",
+        "not_in_stock_text": "Show products that are currently out of stock.",
+        "by_category": "Filter by Category",
+        "by_category_text": "Show products sorted by their category.",
+        "by_brand": "Filter by Brand",
+        "by_brand_text": "Show products sorted by brand.",
+        "by_supplier": "Filter by Supplier",
+        "by_supplier_text": "Show products sorted by supplier."
+      }
+    }
+  },
+  "#image": {
+    "image_uploaded": "Billede gemt. Der kan gå et par minitter inden det er synligt."
+  },
+  "#error": {
+    "try_agian": "Noget gik galt. Prøv igen senere"
+  }
+}

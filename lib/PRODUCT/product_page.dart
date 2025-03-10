@@ -1,10 +1,14 @@
 import 'package:customer_app/PRODUCT/product_item_screen.dart';
+import 'package:customer_app/START/design.dart';
 import 'package:customer_app/_SERVICE/category_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart' show SpinKitCircle;
 
+import '../COMMON/package.dart';
+import '../START/default.dart' show defaults;
 import '../_SERVICE/shoporama.dart';
 import '../_SERVICE/product_model.dart';
 import 'menu_icon.dart';
@@ -63,7 +67,12 @@ final dataProvider = StateNotifierProvider.family<ProductNotifier, AsyncValue<(P
 
 class ProductPage extends ConsumerWidget {
   final int? supplierId;
-  const ProductPage({super.key, this.supplierId});
+  ProductPage({super.key, this.supplierId});
+
+  final sheetTitleStyle = h1Style;
+  final productTileTitleStyle = defaults.textStyle(null).get('productTileTitle');
+  final productTileTextStyle = defaults.textStyle(null).get('productTileText');
+  final productTilePriceStyle = defaults.textStyle(null).get('productTilePrice');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -84,7 +93,7 @@ class ProductPage extends ConsumerWidget {
           final categories = response.$2!;
 
           final Map<String, ShopCategory> categoryMap = {for (var category in categories) category.categoryId: category};
-          final sortedCategoryIds = getUniqueSortedCategoryIds(categories, products);
+          final sortedCategoryIds = _getUniqueSortedCategoryIds(categories, products);
 
           return SingleChildScrollView(
             child: Column(
@@ -93,7 +102,12 @@ class ProductPage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    MenuIcon(icon: Icons.clear_all_outlined, onTap: () async {}),
+                    MenuIcon(
+                      icon: Icons.apps, // clear_all_outlined
+                      onTap: () async {
+                        _showBottomSheet(context, titleStyle: sheetTitleStyle.copyWith(color: Colors.black), style: productTileTitleStyle.copyWith(color: Colors.white, backgroundColor: Colors.transparent));
+                      },
+                    ),
                     Spacer(),
                     MenuIcon(icon: Icons.add, onTap: () async => await Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductEditScreen(supplierId: 11002)))),
                   ],
@@ -104,25 +118,32 @@ class ProductPage extends ConsumerWidget {
 
                   return GestureDetector(
                     onTap: () async => await Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductItemScreen(product: product))),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: ListTile(
-                        tileColor: Colors.white,
-                        leading:
-                            image == null
-                                ? null
-                                : Stack(
-                                  children: [
-                                    Padding(padding: EdgeInsets.only(right: 13), child: SizedBox(width: 60, height: 60, child: Image.network(image))),
-                                    if (product.images != null && product.images!.length > 1) Positioned(bottom: 2, right: 0, child: Column(children: [Icon(Icons.image_outlined, size: 15, color: Colors.black)])),
-                                  ],
-                                ),
-                        trailing: product.isOnline == 1 ? null : Icon(Icons.power_off_outlined),
-                        title: Text(product.name),
-                        subtitle: Text("ID: ${product.productId}"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), // Runde hjørner
-                        ),
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 6),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            tileColor: Colors.transparent,
+                            leading:
+                                image == null
+                                    ? null
+                                    : Stack(
+                                      children: [
+                                        Padding(padding: EdgeInsets.only(right: 13), child: SizedBox(width: 60, height: 60, child: Image.network(image))),
+                                        if (product.images != null && product.images!.length > 1) Positioned(bottom: 2, right: 0, child: Column(children: [Icon(Icons.image_outlined, size: 15, color: Colors.black)])),
+                                      ],
+                                    ),
+                            trailing: product.isOnline == 1 ? null : Icon(Icons.power_off_outlined),
+                            title: Text(product.name, style: productTileTitleStyle),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [Text("${tr("#product.id")} ${product.productId}", style: productTileTextStyle), Text("${tr("#product.price")} ${product.price} ${tr("#product.money_type")}", style: productTilePriceStyle)],
+                            ),
+                          ),
+                          //Padding(padding: const EdgeInsets.all(8.0), child: Row(children: [Expanded(flex: 1, child: Text(tr("#product.price") + " ${product.price}")), Expanded(flex: 1, child: Text("ID: ${product.productId}"))])),
+                        ],
                       ),
                     ),
                   );
@@ -144,7 +165,7 @@ class ProductPage extends ConsumerWidget {
     );
   }
 
-  List<int> getUniqueSortedCategoryIds(List<ShopCategory> categories, List<Product> products) {
+  List<int> _getUniqueSortedCategoryIds(List<ShopCategory> categories, List<Product> products) {
     final Set<int> uniqueCategoryIds = {};
     for (var product in products) {
       if (product.categories != null) {
@@ -152,6 +173,61 @@ class ProductPage extends ConsumerWidget {
       }
     }
     return uniqueCategoryIds.toList()..sort();
+  }
+
+  void _showBottomSheet(BuildContext context, {required TextStyle titleStyle, required TextStyle style}) {
+    final double maxHeight = MediaQuery.of(context).size.height * (2 / 3); // Dynamisk 2/3 af skærmen
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Tillader scrolling
+      backgroundColor: Colors.white,
+      barrierColor: Colors.black54, // Klik udenfor lukker modal
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) {
+        return Container(
+          constraints: BoxConstraints(maxHeight: maxHeight), // Sætter max højde til 2/3 af skærmen
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Text(tr('#product.sheet.list.title'), style: titleStyle)),
+                ListTypeTile(title: tr('#product.sheet.list.is_online'), text: tr('#product.sheet.list.is_online_text'), style: style, onTap: () async => onStyleTap(GetProductList.isOnline)),
+                ListTypeTile(title: tr('#product.sheet.list.is_not_online'), text: tr('#product.sheet.list.is_not_online_text'), style: style, onTap: () async => onStyleTap(GetProductList.isNotOnline)),
+                ListTypeTile(title: tr('#product.sheet.list.in_stock'), text: tr('#product.sheet.list.in_stock_text'), style: style, onTap: () async => onStyleTap(GetProductList.inStock)),
+                ListTypeTile(title: tr('#product.sheet.list.not_in_stock'), text: tr('#product.sheet.list.not_in_stock_text'), style: style, onTap: () async => onStyleTap(GetProductList.notInStock)),
+                ListTypeTile(title: tr('#product.sheet.list.by_category'), text: tr('#product.sheet.list.by_category_text'), style: style, onTap: () async => onStyleTap(GetProductList.byCategory)),
+                ListTypeTile(title: tr('#product.sheet.list.by_brand'), text: tr('#product.sheet.list.by_brand_text'), style: style, onTap: () async => onStyleTap(GetProductList.byBrand)),
+                ListTypeTile(title: tr('#product.sheet.list.by_supplier'), text: tr('#product.sheet.list.by_supplier_text'), style: style, onTap: () async => onStyleTap(GetProductList.bySupplier)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void onStyleTap(GetProductList listType) {}
+}
+
+enum GetProductList { isOnline, isNotOnline, inStock, notInStock, byCategory, byBrand, bySupplier }
+
+class ListTypeTile extends StatelessWidget {
+  final VoidCallback? onTap;
+  final String title;
+  final String? text;
+  final TextStyle style;
+  ListTypeTile({super.key, required this.title, required this.style, this.onTap, this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    final subStyle = style.copyWith(fontSize: style.fontSize! - 4);
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+      decoration: BoxDecoration(color: const Color.fromRGBO(128, 152, 164, 1), borderRadius: BorderRadius.circular(12)),
+      child: ListTile(title: Text(title, style: style), subtitle: text == null ? null : Text(text!, style: subStyle), onTap: onTap ?? () => Navigator.pop(context)),
+    );
   }
 }
 
@@ -198,7 +274,7 @@ class Tag extends StatelessWidget {
       child: Chip(
         label: Text(category.name),
         padding: EdgeInsets.all(0), // .symmetric(horizontal: 12.0, vertical: 6.0),
-        backgroundColor: const Color.fromARGB(255, 68, 101, 129), // Baggrundsfarve for tag
+        backgroundColor: Color.fromRGBO(128, 152, 164, 1), // Baggrundsfarve for tag
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0), // Afrundede hjørner
         ),
