@@ -34,6 +34,41 @@
   "#image": {
     "image_uploaded": "Billede gemt. Der kan gå et par minitter inden det er synligt."
   },
+  "#mail_login": {
+    "text": {
+      "title": "Login with Email",
+      "email": "Email Address",
+      "password": "Password",
+      "verify_email": "Verify Your Email",
+      "check_email": "A verification email has been sent to your email address.",
+      "success": "Successfully logged in!"
+    },
+    "button": {
+      "login": "Login",
+      "register": "Register",
+      "forgot_password": "Forgot Password?",
+      "resend_verification": "Resend Verification Email",
+      "check_verification": "Check Verification",
+      "register_help": "Don't have an account? Register now."
+    },
+    "success": {
+      "login": "You have successfully logged in!",
+      "reset_password": "A password reset link has been sent to your email.",
+      "email_verified": "Your email has been verified!"
+    },
+    "error": {
+      "empty_fields": "Email and password cannot be empty.",
+      "empty_email": "Please enter your email address.",
+      "invalid_email": "Invalid email address.",
+      "user_disabled": "This user has been disabled.",
+      "user_not_found": "No account found with this email.",
+      "wrong_password": "Incorrect password.",
+      "email_in_use": "This email is already in use.",
+      "operation_not_allowed": "This operation is not allowed.",
+      "weak_password": "Your password is too weak.",
+      "unknown": "An unknown error occurred."
+    }
+  },
   "#error": {
     "try_agian": "Noget gik galt. Prøv igen senere"
   }
